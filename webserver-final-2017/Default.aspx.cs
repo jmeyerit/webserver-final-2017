@@ -1,6 +1,4 @@
 ﻿using System;
-using dsProductsByManufacturerTableAdapters;
-using dsManufacturerTableAdapters;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,40 +12,57 @@ public partial class _Default : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            InitializeData();
+            // Loads all the available charts in a DropDownList
+            string[] chartType = Enum.GetNames(typeof(SeriesChartType));
+            ddlChartType.DataSource = chartType;
+            ddlChartType.DataBind();
+
+            // Sets selected value to the default chart type
+            ddlChartType.SelectedValue = "Bar";
+            FilterValues();   
         }
-
-
-
-        DataManipulator myDataManip = Chart1.DataManipulator;
-
-        // Filtered points are only marked as empty.
-        myDataManip.FilterSetEmptyPoints = false;
-
-        // Filters all points where the first Y value is greater than 100. 
-        // The input series is overwritten with the filtered data.    
-        myDataManip.Filter(CompareMethod.MoreThan, 20, "#ProductsManufactured");
-
-        // Filters all points where the X value is less than, or equal to, a specific date.    
-        // The resulting data is stored in an output series, preserving the original data.    
-        //myDataManip.Filter(CompareMethod.LessOrEqual, DateTime.Parse("1/1/2001").ToOADate(), "MySeries", "ResultSeries", "X");
     }
 
-    private void InitializeData()
+    protected void ddlSort_SelectedIndexChanged(object sender, EventArgs e)
     {
-        // Initialize lbManufacturer
-        /* dsManufacturerTableAdapters.tManufacturerTableAdapter manufacturerTableAdapter = new dsManufacturerTableAdapters.tManufacturerTableAdapter();
-         dsManufacturer.tManufacturerDataTable manufacturerDataTable = manufacturerTableAdapter.GetData();
+        FilterValues();
+    }
 
-         lbManufacturer.DataTextField = "Manufacturer";
-         lbManufacturer.DataValueField = "ManufacturerID";
-         lbManufacturer.DataSource = manufacturerDataTable;
-         lbManufacturer.DataBind();
-         lbManufacturer.SelectedIndex = 0;*/
+    protected void ddlTop_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        FilterValues();
+    }
 
-        // Initialize 
+    private void FilterValues()
+    {
+       /* cProductManufacturer.DataBind();
+        cProductManufacturer.DataManipulator.FilterTopN(Convert.ToInt32(ddlTop.SelectedValue), cProductManufacturer.Series["Series"]);
 
+        if (ddlSort.SelectedValue == "Ascending")
+        {
+            cProductManufacturer.Series["Series"].Sort(PointSortOrder.Ascending, "Y");
+        }
+        else
+        {
+            cProductManufacturer.Series["Series"].Sort(PointSortOrder.Descending, "Y");
+        }
+        cProductManufacturer.Series["Series"].ChartType = (SeriesChartType)Enum.Parse(typeof(SeriesChartType), ddlChartType.Text);
+    */
+    }
+
+    protected void ddlChartType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        FilterValues();
+    }
+
+    protected void ddlData_SelectedIndexChanged(object sender, EventArgs e)
+    {
         
+    }
 
+    protected void timerTransaction_Tick(object sender, EventArgs e)
+    {
+       // Chart2.Series[0].Points.AddY(5);
+        //Chart2.Series[0].Points.InsertY(step, 5);
     }
 }
